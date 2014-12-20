@@ -1,0 +1,18 @@
+{
+  "name": "node-gcdb",
+  "description": "Helper library for working with GreenCubes Databases",
+  "private": true,
+  "version": "0.1.0",
+  "keywords": [],
+  "dependencies": {
+    "mysql": "2.5.x",
+    "underscore": "1.7.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "main": "app.js",
+  "repository": "git@github.com:GreenCubes/node-gcdb.git",
+  "author": "Kern0 aka Arseniy Maximov",
+  "license": "",
+}

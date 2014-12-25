@@ -1,10 +1,30 @@
 /**
  * GCDB
  *
- * @module		:: Utils
- * @description :: Вспомогательные функции
+ * @module		:: GCDB
+ * @description :: Functions for work with GreenCubes databases
  */
-module.exports.user = user = {
+
+function GCDB(config) {
+	if (!config.sitedb) {
+		throw "Wrong configuration: No site [gcdb] DB connection";
+	}
+
+	if (!config.userauthdb) {
+		throw "Wrong configuration: No user auth [main] DB connection";
+	}
+
+	if (!config.orgdb) {
+		throw "Wrong configuration: No organization DB connection";
+	}
+
+	this.sitedb = config.sitedb;
+	this.userauthdb = config.userauthdb;
+	this.orgdb = config.orgdb;
+};
+
+
+GCDB.prototype.user = user = {
 
 	getByID: function (id, db, cb) {
 
@@ -12,18 +32,20 @@ module.exports.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = gcdbconn;
+			db = sitedb;
 			query = 'SELECT login FROM users WHERE id = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
+				case 'sitedb':
 					query = 'SELECT login FROM users WHERE id = ?';
-					db = gcdbconn;
+					db = sitedb;
 					break;
 
 				case 'maindb':
+				case 'userauthdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = maindbconn;
+					db = userauthdb;
 					break;
 
 				default:
@@ -49,18 +71,18 @@ module.exports.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = gcdbconn;
+			db = sitedb;
 			query = 'SELECT id FROM users WHERE login = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 					query = 'SELECT id FROM users WHERE login = ?';
-					db = gcdbconn;
+					db = sitedb;
 					break;
 
 				case 'maindb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = maindbconn;
+					db = userauthdb;
 					break;
 
 				default:
@@ -83,9 +105,9 @@ module.exports.user = user = {
 	},
 
 	getCapitalizedLogin: function getCapitalizedLogin(login, cb) {
-		if (!gcdbconn) return cb('You\'re not connected to GC MySQL DB');
+		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		gcdbconn.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
+		sitedb.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -98,7 +120,7 @@ module.exports.user = user = {
 
 	getRegDate: function getRegDate(user, cb) {
 		if (typeof user === 'number') {
-			gcdbconn.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
+			sitedb.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
@@ -106,7 +128,7 @@ module.exports.user = user = {
 				}
 			});
 		} else if (typeof user === 'string') {
-			gcdbconn.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
+			sitedb.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				cb(null, result[0].reg_date);
@@ -117,11 +139,11 @@ module.exports.user = user = {
 	}
 };
 
-module.exports.org = org = {
+GCDB.prototype.org = org = {
 	getByID: function getByID(id, cb) {
-		if (!gcdbconn) return cb('You\'re not connected to GC MySQL DB');
+		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		orgdbconn.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
+		orgdb.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -133,9 +155,9 @@ module.exports.org = org = {
 	},
 
 	getByTag: function getByTag(tag, cb) {
-		if (!gcdbconn) return cb('You\'re not connected to GC MySQL DB');
+		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		orgdbconn.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
+		orgdb.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -146,3 +168,6 @@ module.exports.org = org = {
 		});
 	}
 };
+
+
+module.exports = GCDB;

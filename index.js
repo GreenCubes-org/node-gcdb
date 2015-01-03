@@ -25,7 +25,7 @@ function GCDB(config) {
 	}
 
 	this.sitedb = mysql.createPool(config.sitedb);
-	this.userauthdb = mysql.createPool(config.userauthdb);
+	this.usersdb = mysql.createPool(config.usersdb);
 	this.gcmaindb = mysql.createPool(config.gcmaindb);
 	this.orgdb = mysql.createPool(config.orgdb);
 };

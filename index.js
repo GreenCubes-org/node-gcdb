@@ -5,6 +5,8 @@
  * @description :: Functions for work with GreenCubes databases
  */
 
+var mysql = require('mysql');
+
 function GCDB(config) {
 	if (!config.sitedb) {
 		throw "Wrong configuration: No site [gcdb] DB connection";
@@ -14,13 +16,18 @@ function GCDB(config) {
 		throw "Wrong configuration: No user auth [main] DB connection";
 	}
 
+	if (!config.gcmaindb) {
+		throw "Wrong configuration: No main game server auth DB connection";
+	}
+
 	if (!config.orgdb) {
 		throw "Wrong configuration: No organization DB connection";
 	}
 
-	this.sitedb = config.sitedb;
-	this.userauthdb = config.userauthdb;
-	this.orgdb = config.orgdb;
+	this.sitedb = mysql.createPool(config.sitedb);
+	this.userauthdb = mysql.createPool(config.userauthdb);
+	this.gcmaindb = mysql.createPool(config.gcmaindb);
+	this.orgdb = mysql.createPool(config.orgdb);
 };
 
 

@@ -12,11 +12,11 @@ function GCDB(config) {
 		throw "Wrong configuration: No site [gcdb] DB connection";
 	}
 
-	if (!config.userauthdb) {
-		throw "Wrong configuration: No user auth [main] DB connection";
+	if (!config.usersdb) {
+		throw "Wrong configuration: No users [main] DB connection";
 	}
 
-	if (!config.gcmaindb) {
+	if (!config.mainsrvdb) {
 		throw "Wrong configuration: No main game server auth DB connection";
 	}
 
@@ -26,7 +26,7 @@ function GCDB(config) {
 
 	this.sitedb = mysql.createPool(config.sitedb);
 	this.usersdb = mysql.createPool(config.usersdb);
-	this.gcmaindb = mysql.createPool(config.gcmaindb);
+	this.mainsrvdb = mysql.createPool(config.mainsrvdb);
 	this.orgdb = mysql.createPool(config.orgdb);
 };
 
@@ -50,9 +50,9 @@ GCDB.prototype.user = user = {
 					break;
 
 				case 'maindb':
-				case 'userauthdb':
+				case 'usersdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = userauthdb;
+					db = usersdb;
 					break;
 
 				default:
@@ -89,7 +89,7 @@ GCDB.prototype.user = user = {
 
 				case 'maindb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = userauthdb;
+					db = usersdb;
 					break;
 
 				default:

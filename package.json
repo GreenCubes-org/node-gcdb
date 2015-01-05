@@ -1,5 +1,5 @@
 {
-  "name": "node-gcdb",
+  "name": "gcdb",
   "description": "Helper library for working with GreenCubes Databases",
   "private": true,
   "version": "0.1.0",

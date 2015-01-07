@@ -39,20 +39,20 @@ GCDB.prototype.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = sitedb;
+			db = this.sitedb;
 			query = 'SELECT login FROM users WHERE id = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 				case 'sitedb':
 					query = 'SELECT login FROM users WHERE id = ?';
-					db = sitedb;
+					db = this.sitedb;
 					break;
 
 				case 'maindb':
 				case 'usersdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = usersdb;
+					db = this.usersdb;
 					break;
 
 				default:
@@ -78,18 +78,18 @@ GCDB.prototype.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = sitedb;
+			db = this.sitedb;
 			query = 'SELECT id FROM users WHERE login = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 					query = 'SELECT id FROM users WHERE login = ?';
-					db = sitedb;
+					db = this.sitedb;
 					break;
 
 				case 'maindb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = usersdb;
+					db = this.usersdb;
 					break;
 
 				default:
@@ -143,7 +143,9 @@ GCDB.prototype.user = user = {
 		} else {
 			cb('Incorrect variable!');
 		}
-	}
+	},
+
+
 };
 
 GCDB.prototype.org = org = {

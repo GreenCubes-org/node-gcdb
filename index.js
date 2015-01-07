@@ -24,10 +24,10 @@ function GCDB(config) {
 		throw "Wrong configuration: No organization DB connection";
 	}
 
-	this.sitedb = mysql.createPool(config.sitedb);
-	this.usersdb = mysql.createPool(config.usersdb);
-	this.mainsrvdb = mysql.createPool(config.mainsrvdb);
-	this.orgdb = mysql.createPool(config.orgdb);
+	GCDB.sitedb = mysql.createPool(config.sitedb);
+	GCDB.usersdb = mysql.createPool(config.usersdb);
+	GCDB.mainsrvdb = mysql.createPool(config.mainsrvdb);
+	GCDB.orgdb = mysql.createPool(config.orgdb);
 };
 
 

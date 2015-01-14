@@ -29,12 +29,10 @@ function GCDB(config) {
 		throw "Wrong configuration: No organization DB connection";
 	}
 
-	db.sitedb = mysql.createPool(config.sitedb);
-	db.usersdb = mysql.createPool(config.usersdb);
-	db.mainsrvdb = mysql.createPool(config.mainsrvdb);
-	db.orgdb = mysql.createPool(config.orgdb);
-
-	return db;
+	this.sitedb = mysql.createPool(config.sitedb);
+	this.usersdb = mysql.createPool(config.usersdb);
+	this.mainsrvdb = mysql.createPool(config.mainsrvdb);
+	this.orgdb = mysql.createPool(config.orgdb);
 };
 
 
@@ -46,20 +44,20 @@ GCDB.prototype.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = GCDB.sitedb;
+			db = this.sitedb;
 			query = 'SELECT login FROM users WHERE id = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 				case 'sitedb':
 					query = 'SELECT login FROM users WHERE id = ?';
-					db = GCDB.sitedb;
+					db = this.sitedb;
 					break;
 
 				case 'maindb':
 				case 'usersdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = GCDB.usersdb;
+					db = this.usersdb;
 					break;
 
 				default:
@@ -85,18 +83,18 @@ GCDB.prototype.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = GCDB.sitedb;
+			db = this.sitedb;
 			query = 'SELECT id FROM users WHERE login = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 					query = 'SELECT id FROM users WHERE login = ?';
-					db = GCDB.sitedb;
+					db = this.sitedb;
 					break;
 
 				case 'maindb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = GCDB.usersdb;
+					db = this.usersdb;
 					break;
 
 				default:
@@ -121,7 +119,7 @@ GCDB.prototype.user = user = {
 	getCapitalizedLogin: function getCapitalizedLogin(login, cb) {
 		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		sitedb.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
+		this.sitedb.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -134,7 +132,7 @@ GCDB.prototype.user = user = {
 
 	getRegDate: function getRegDate(user, cb) {
 		if (typeof user === 'number') {
-			sitedb.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
+			this.sitedb.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
@@ -142,7 +140,7 @@ GCDB.prototype.user = user = {
 				}
 			});
 		} else if (typeof user === 'string') {
-			sitedb.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
+			this.sitedb.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				cb(null, result[0].reg_date);
@@ -159,7 +157,7 @@ GCDB.prototype.org = org = {
 	getByID: function getByID(id, cb) {
 		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		orgdb.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
+		this.orgdb.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -173,7 +171,7 @@ GCDB.prototype.org = org = {
 	getByTag: function getByTag(tag, cb) {
 		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		orgdb.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
+		this.orgdb.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {

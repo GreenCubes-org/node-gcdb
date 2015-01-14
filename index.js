@@ -7,7 +7,12 @@
 
 var mysql = require('mysql');
 
+
+module.exports = GCDB;
+
 function GCDB(config) {
+	var db;
+
 	if (!config.sitedb) {
 		throw "Wrong configuration: No site [gcdb] DB connection";
 	}
@@ -24,10 +29,12 @@ function GCDB(config) {
 		throw "Wrong configuration: No organization DB connection";
 	}
 
-	GCDB.sitedb = mysql.createPool(config.sitedb);
-	GCDB.usersdb = mysql.createPool(config.usersdb);
-	GCDB.mainsrvdb = mysql.createPool(config.mainsrvdb);
-	GCDB.orgdb = mysql.createPool(config.orgdb);
+	db.sitedb = mysql.createPool(config.sitedb);
+	db.usersdb = mysql.createPool(config.usersdb);
+	db.mainsrvdb = mysql.createPool(config.mainsrvdb);
+	db.orgdb = mysql.createPool(config.orgdb);
+
+	return db;
 };
 
 
@@ -177,6 +184,3 @@ GCDB.prototype.org = org = {
 		});
 	}
 };
-
-
-module.exports = GCDB;

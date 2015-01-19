@@ -38,26 +38,28 @@ function GCDB(config) {
 
 GCDB.prototype.user = user = {
 
+	_this: this,
+
 	getByID: function (id, db, cb) {
 
 		var query;
 
 		if (db instanceof Function) {
 			cb = db;
-			db = this.sitedb;
+			db = user._this.sitedb;
 			query = 'SELECT login FROM users WHERE id = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 				case 'sitedb':
 					query = 'SELECT login FROM users WHERE id = ?';
-					db = this.sitedb;
+					db = user._this.sitedb;
 					break;
 
 				case 'maindb':
 				case 'usersdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = this.usersdb;
+					db = user._this.usersdb;
 					break;
 
 				default:
@@ -83,18 +85,18 @@ GCDB.prototype.user = user = {
 
 		if (db instanceof Function) {
 			cb = db;
-			db = this.sitedb;
+			db = user._this.sitedb;
 			query = 'SELECT id FROM users WHERE login = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 					query = 'SELECT id FROM users WHERE login = ?';
-					db = this.sitedb;
+					db = user._this.sitedb;
 					break;
 
 				case 'maindb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = this.usersdb;
+					db = user._this.usersdb;
 					break;
 
 				default:

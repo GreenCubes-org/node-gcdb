@@ -8,11 +8,16 @@
 var mysql = require('mysql');
 
 
+var dbconn = {
+	sitedb: null,
+	usersdb: null,
+	marinsrvdb: null,
+	orgdb: null
+};
+
 module.exports = GCDB;
 
 function GCDB(config) {
-	var db;
-
 	if (!config.sitedb) {
 		throw "Wrong configuration: No site [gcdb] DB connection";
 	}
@@ -29,37 +34,34 @@ function GCDB(config) {
 		throw "Wrong configuration: No organization DB connection";
 	}
 
-	this.sitedb = mysql.createPool(config.sitedb);
-	this.usersdb = mysql.createPool(config.usersdb);
-	this.mainsrvdb = mysql.createPool(config.mainsrvdb);
-	this.orgdb = mysql.createPool(config.orgdb);
+	this.sitedb = dbconn.sitedb = mysql.createPool(config.sitedb);
+	this.usersdb = dbconn.usersdb = mysql.createPool(config.usersdb);
+	this.mainsrvdb = dbconn.mainsrvdb = mysql.createPool(config.mainsrvdb);
+	this.orgdb = dbconn.orgdb = mysql.createPool(config.orgdb);
 };
 
 
 GCDB.prototype.user = user = {
-
-	_this: this,
-
 	getByID: function (id, db, cb) {
 
 		var query;
 
 		if (db instanceof Function) {
 			cb = db;
-			db = user._this.sitedb;
+			db = dbconn.sitedb;
 			query = 'SELECT login FROM users WHERE id = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
 				case 'sitedb':
 					query = 'SELECT login FROM users WHERE id = ?';
-					db = user._this.sitedb;
+					db = dbconn.sitedb;
 					break;
 
 				case 'maindb':
 				case 'usersdb':
 					query = 'SELECT name AS login FROM users WHERE id = ?';
-					db = user._this.usersdb;
+					db = dbconn.usersdb;
 					break;
 
 				default:
@@ -79,24 +81,27 @@ GCDB.prototype.user = user = {
 			}
 		});
 	},
+
 	getByLogin: function (login, db, cb) {
 
 		var query;
 
 		if (db instanceof Function) {
 			cb = db;
-			db = user._this.sitedb;
+			db = dbconn.sitedb;
 			query = 'SELECT id FROM users WHERE login = ?';
 		} else {
 			switch (db) {
 				case 'gcdb':
+				case 'sitedb':
 					query = 'SELECT id FROM users WHERE login = ?';
-					db = user._this.sitedb;
+					db = dbconn.sitedb;
 					break;
 
 				case 'maindb':
+				case 'usersdb':
 					query = 'SELECT id FROM users WHERE name = ?';
-					db = user._this.usersdb;
+					db = dbconn.usersdb;
 					break;
 
 				default:

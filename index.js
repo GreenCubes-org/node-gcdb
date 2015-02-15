@@ -124,9 +124,9 @@ GCDB.prototype.user = user = {
 	},
 
 	getCapitalizedLogin: function getCapitalizedLogin(login, cb) {
-		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
+		if (!dbconn.sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		this.sitedb.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
+		dbconn.sitedb.query('SELECT login, id FROM users WHERE login = ?', [login], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -139,7 +139,7 @@ GCDB.prototype.user = user = {
 
 	getRegDate: function getRegDate(user, cb) {
 		if (typeof user === 'number') {
-			this.sitedb.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
+			dbconn.sitedb.query('SELECT reg_date FROM users WHERE id = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
@@ -147,7 +147,7 @@ GCDB.prototype.user = user = {
 				}
 			});
 		} else if (typeof user === 'string') {
-			this.sitedb.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
+			dbconn.sitedb.query('SELECT reg_date FROM users WHERE login = ?', [user], function (err, result) {
 				if (err) return cb(err);
 
 				cb(null, result[0].reg_date);
@@ -162,9 +162,9 @@ GCDB.prototype.user = user = {
 
 GCDB.prototype.org = org = {
 	getByID: function getByID(id, cb) {
-		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
+		if (!dbconn.sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		this.orgdb.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
+		dbconn.orgdb.query('SELECT * FROM organizations WHERE id = ?', [id], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {
@@ -176,9 +176,9 @@ GCDB.prototype.org = org = {
 	},
 
 	getByTag: function getByTag(tag, cb) {
-		if (!sitedb) return cb('You\'re not connected to GC MySQL DB');
+		if (!dbconn.sitedb) return cb('You\'re not connected to GC MySQL DB');
 
-		this.orgdb.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
+		dbconn.orgdb.query('SELECT * FROM organizations WHERE tag = ?', [tag], function (err, result) {
 			if (err) return cb(err);
 
 			if (result.length !== 0) {

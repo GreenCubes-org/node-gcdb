@@ -37,7 +37,7 @@ function GCDB(config) {
 	this.sitedb = dbconn.sitedb = (config.sitedb) ? mysql.createPool(config.sitedb) : null;
 	this.usersdb = dbconn.usersdb = (config.usersdb) ? mysql.createPool(config.usersdb) : null;
 	this.mainsrvdb = dbconn.mainsrvdb = (config.mainsrvdb) ? mysql.createPool(config.mainsrvdb) : null;
-	this.orgdb = dbconn.orgdb = (config.orgdb) mysql.createPool(config.orgdb) : null;
+	this.orgdb = dbconn.orgdb = (config.orgdb) ? mysql.createPool(config.orgdb) : null;
 };
 
 

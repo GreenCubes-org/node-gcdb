@@ -19,19 +19,19 @@ module.exports = GCDB;
 
 function GCDB(config) {
 	if (!config.sitedb) {
-		throw "Wrong configuration: No site [gcdb] DB connection";
+		console.error("Wrong configuration: No site [gcdb] DB connection");
 	}
 
 	if (!config.usersdb) {
-		throw "Wrong configuration: No users [main] DB connection";
+		console.error("Wrong configuration: No users [main] DB connection");
 	}
 
 	if (!config.mainsrvdb) {
-		throw "Wrong configuration: No main game server auth DB connection";
+		console.error("Wrong configuration: No main game server auth DB connection");
 	}
 
 	if (!config.orgdb) {
-		throw "Wrong configuration: No organization DB connection";
+		console.error("Wrong configuration: No organization DB connection");
 	}
 
 	this.sitedb = dbconn.sitedb = mysql.createPool(config.sitedb);

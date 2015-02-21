@@ -12,7 +12,8 @@ var dbconn = {
 	sitedb: null,
 	usersdb: null,
 	marinsrvdb: null,
-	orgdb: null
+	orgdb: null,
+	apidb: null
 };
 
 module.exports = GCDB;
@@ -34,10 +35,15 @@ function GCDB(config) {
 		console.error("Wrong configuration: No organization DB connection");
 	}
 
+	if (!config.apidb) {
+		console.error("Wrong configuration: No API DB connection");
+	}
+
 	this.sitedb = dbconn.sitedb = (config.sitedb) ? mysql.createPool(config.sitedb) : null;
 	this.usersdb = dbconn.usersdb = (config.usersdb) ? mysql.createPool(config.usersdb) : null;
 	this.mainsrvdb = dbconn.mainsrvdb = (config.mainsrvdb) ? mysql.createPool(config.mainsrvdb) : null;
 	this.orgdb = dbconn.orgdb = (config.orgdb) ? mysql.createPool(config.orgdb) : null;
+	this.apidb = dbconn.apidb = (config.apidb) ? mysql.createPool(config.apidb) : null;
 };
 
 
@@ -187,5 +193,130 @@ GCDB.prototype.org = org = {
 				cb(null, null);
 			}
 		});
+	}
+};
+
+GCDB.prototype.api = {
+	apps: {
+		list: function (uid, showAll, cb) {
+			var query = '';
+
+			if (showAll) {
+				query = 'SELECT * FROM client WHERE 1';
+			} else {
+				query = 'SELECT * FROM client WHERE owner = ' + uid;
+			}
+
+			dbconn.apidb.query(query, function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, result[0]);
+				} else {
+					cb(null, null);
+				}
+			});
+		},
+
+		get: function (id, cb) {
+			dbconn.apidb.query('SELECT * FROM client WHERE id = ?', [id], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, result[0]);
+				} else {
+					cb(null, null);
+				}
+			});
+		},
+
+		edit: function (app, cb) {
+			var query = 'INSERT INTO client (`name`, `clientSecret`,`redirectURI`,`scope`,`id`,`createdAt`,`updatedAt`,`homeURI`,`owner`,`description`,`internal`) ' +
+				'VALUES (' +
+				"'" + app.name + "'" +
+				"'" + app.clientSecret + "'" +
+				"'" + app.naredirectURIme + "'" +
+				"'" + app.scope + "'" +
+				"'" + app.id + "'" +
+				"'" + app.createdAt + "'" +
+				"'" + app.updatedAt + "'" +
+				"'" + app.homeURI + "'" +
+				"'" + app.owner + "'" +
+				"'" + app.description + "'" +
+				"" + (+app.internal) + "" +
+				');';
+
+			dbconn.apidb.query(query, function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, result[0]);
+				} else {
+					cb(null, null);
+				}
+			});
+		},
+
+		delete: function (id, cb) {
+			dbconn.apidb.query('DELETE FROM client WHERE id = ?', [id], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, true);
+				} else {
+					cb(null, false);
+				}
+			});
+		}
+	},
+
+	tokens: {
+		listByUser: function (uid, cb) {
+			dbconn.apidb.query('SELECT id, createdAt, upadtedAt, clientId, userId, scope FROM token WHERE userId = ?', [uid], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, result[0]);
+				} else {
+					cb(null, null);
+				}
+			});
+		},
+
+		listByApp: function (id, cb) {
+			dbconn.apidb.query('SELECT id, createdAt, upadtedAt, clientId, userId, scope FROM token WHERE clientId = ?', [id], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, result[0]);
+				} else {
+					cb(null, null);
+				}
+			});
+		},
+
+		deleteByUser: function (uid, cb) {
+			dbconn.apidb.query('DELETE FROM token WHERE userId = ?', [uid], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, true);
+				} else {
+					cb(null, false);
+				}
+			});
+		},
+
+		deleteByApp: function (id, cb) {
+			dbconn.apidb.query('DELETE FROM token WHERE clientId = ?', [id], function (err, result) {
+				if (err) return cb(err);
+
+				if (result.length !== 0) {
+					cb(null, true);
+				} else {
+					cb(null, false);
+				}
+			});
+		},
 	}
 };

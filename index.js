@@ -211,7 +211,7 @@ GCDB.prototype.api = {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
-					cb(null, result[0]);
+					cb(null, result);
 				} else {
 					cb(null, null);
 				}
@@ -276,7 +276,7 @@ GCDB.prototype.api = {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
-					cb(null, result[0]);
+					cb(null, result);
 				} else {
 					cb(null, null);
 				}
@@ -288,7 +288,7 @@ GCDB.prototype.api = {
 				if (err) return cb(err);
 
 				if (result.length !== 0) {
-					cb(null, result[0]);
+					cb(null, result);
 				} else {
 					cb(null, null);
 				}

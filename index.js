@@ -213,7 +213,7 @@ GCDB.prototype.api = {
 				if (result.length !== 0) {
 					cb(null, result);
 				} else {
-					cb(null, null);
+					cb(null, []);
 				}
 			});
 		},

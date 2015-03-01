@@ -44,8 +44,9 @@ function GCDB(config) {
 	this.mainsrvdb = dbconn.mainsrvdb = (config.mainsrvdb) ? mysql.createPool(config.mainsrvdb) : null;
 	this.orgdb = dbconn.orgdb = (config.orgdb) ? mysql.createPool(config.orgdb) : null;
 	this.apidb = dbconn.apidb = (config.apidb) ? mysql.createPool(config.apidb) : null;
-};
 
+	this.escape =  mysql.escape;
+};
 
 GCDB.prototype.user = user = {
 	getByID: function (id, db, cb) {
